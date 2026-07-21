@@ -1,0 +1,110 @@
+# BÁO CÁO ĐỀ XUẤT DỰ ÁN: NUTRICOOK APP (PRM393)
+
+**Mã môn học:** PRM393 - Flutter Mobile Application Development
+**Đội ngũ phát triển:** Team Wizards
+**Sinh viên thực hiện:** Trung Nhân
+**Nền tảng triển khai:** Mobile Application (Flutter SDK & Dart)
+**Mục tiêu:** Phát triển phiên bản MVP ứng dụng tra cứu công thức nấu ăn và quản lý thực đơn cá nhân, đáp ứng toàn diện các tiêu chí kỹ thuật và barem điểm của học phần.
+
+---
+
+## 1. TỔNG QUAN & GIÁ TRỊ CỐT LÕI CỦA DỰ ÁN (VALUE PROPOSITION)
+
+### 1.1. Công dụng thực tế đối với người dùng (User Experience)
+- **Giải quyết bài toán "Hôm nay ăn gì?":** Hệ thống cung cấp một kho tàng công thức món ăn phong phú từ khắp nơi trên thế giới được cập nhật liên tục từ API, giúp người dùng không phải mất thời gian suy nghĩ thực đơn mỗi ngày.
+- **Sổ tay nấu ăn thông minh:** Thay vì phải chụp màn hình hoặc lưu link bài viết rải rác trên các nền tảng mạng xã hội, ứng dụng giúp họ tập trung và lưu trữ toàn bộ các món ăn yêu thích về một nơi duy nhất.
+- **Cá nhân hóa trải nghiệm nấu nướng:** Người dùng có thể tự thêm các ghi chú chỉnh sửa theo khẩu vị riêng (ví dụ: "Món này mẹ khen ngon nhưng lần sau cần bớt cay") – điều mà các trang web đọc công thức thuần túy trên mạng không làm được.
+
+### 1.2. Lý do người dùng lựa chọn ứng dụng (Pain Points Solved)
+- **Tập trung và không quảng cáo:** Khi tìm công thức trên web, người dùng thường bị bủa vây bởi các banner quảng cáo, pop-up che mất chữ. Ứng dụng mang lại trải nghiệm tinh gọn, tập trung hoàn toàn vào việc nấu ăn.
+- **Tối ưu hóa khi đang nấu bếp:** Giao diện ứng dụng được thiết kế chia rõ ràng: Tab nguyên liệu riêng (để đi chợ chuẩn bị) và Tab các bước thực hiện riêng. Người dùng có thể vừa cầm điện thoại bằng một tay trong bếp vừa thao tác check-list cực kỳ tiện lợi.
+- **Theo dõi sức khỏe chủ động:** Đi kèm với mỗi món ăn là các thông số dinh dưỡng/Calo ước tính, hỗ trợ đắc lực cho những người đang có mục tiêu tăng/giảm cân hoặc duy trì lối sống lành mạnh (Healthy).
+
+---
+
+## 2. LUỒNG TRẢI NGHIỆM NGƯỜI DÙNG (USER FLOW)
+
+Ứng dụng được thiết kế với luồng đi tuyến tính, tập trung vào trải nghiệm mượt mà, trực quan trên thiết bị di động:
+
+1. **Khởi động & Xác thực (Authentication):**
+   - Người dùng mở ứng dụng, hiển thị màn hình Chào mừng (Splash Screen).
+   - Chuyển hướng đến màn hình Đăng nhập / Đăng ký.
+   - Người dùng nhập Email & Password để xác thực thông qua Firebase Auth.
+
+2. **Khám phá (Home & REST API):**
+   - Đăng nhập thành công, hệ thống đưa người dùng vào trang chủ (Home Screen).
+   - Hệ thống tự động fetch dữ liệu từ Public API (TheMealDB) để hiển thị danh sách các món ăn nổi bật hoặc ngẫu nhiên.
+   - Người dùng có thể sử dụng thanh **Search** (tìm theo tên món) hoặc **Filter** (lọc theo danh mục: thịt bò, hải sản, món chay).
+
+3. **Chi tiết Món ăn (Detail Screen):**
+   - Người dùng click vào một món ăn cụ thể để xem chi tiết: Hình ảnh, nguyên liệu, hướng dẫn từng bước và lượng Calo ước tính.
+   - Tại màn hình này tích hợp nút **"Yêu thích" (Heart icon)**.
+
+4. **Tương tác Dữ liệu Cá nhân (CRUD & Cloud Firestore):**
+   - Khi bấm "Yêu thích", ứng dụng sẽ **Create** một bản ghi lưu thông tin món ăn đó vào Cloud Firestore dưới dạng danh sách lưu trữ của riêng tài khoản đó.
+   - Người dùng truy cập tab **Favorite / Menu** để xem danh sách món đã lưu (**Read**).
+   - Người dùng có thể vuốt để xóa món khỏi danh sách (**Delete**) hoặc thêm ghi chú cá nhân cho món ăn, ví dụ: "Cần giảm nửa lượng đường" (**Update**).
+
+5. **Quản lý Hồ sơ (Profile):**
+   - Người dùng vào tab Profile để xem thông tin tài khoản, cập nhật tên, chiều cao, cân nặng mục tiêu (**Update**) và tiến hành Đăng xuất.
+
+---
+
+## 3. PHÂN BỔ TÍNH NĂNG KHỚP VỚI BAREM ĐIỂM (ASSESSMENT RUBRIC)
+
+Dự án được cấu trúc chặt chẽ để tối ưu hóa việc lấy điểm dựa trên các yêu cầu bắt buộc của đồ án PRM393:
+
+| Yêu cầu của đề bài | Tính năng trong ứng dụng NutriCook | Công nghệ / Phương án triển khai |
+| :--- | :--- | :--- |
+| **Firebase Integration (15đ)** | Đăng nhập bằng Email/Pass. Lưu trữ danh sách yêu thích và thông tin cá nhân. | `Firebase Authentication`, `Cloud Firestore` |
+| **REST API Integration (15đ)** | Lấy dữ liệu danh sách món ăn, tìm kiếm và lọc danh mục thực phẩm. | `http` hoặc `dio` package + Kết nối hệ thống TheMealDB API |
+| **CRUD Operations (20đ)** | Thêm/Đọc/Sửa/Xóa các món ăn trong danh sách "Favorite" và thông tin Profile. | Cloud Firestore CRUD commands (`set()`, `get()`, `update()`, `delete()`) |
+| **Search / Filtering** | Ô tìm kiếm tên món ăn, nút bấm lọc danh mục. | Xử lý qua tham số Query String của REST API |
+| **Input Validation** | Kiểm tra cấu trúc Email hợp lệ, mật khẩu > 6 ký tự, không để trống trường nhập liệu. | `FormState`, Regex trong các widget `TextFormField` |
+| **Exception Handling** | Xử lý khi mất mạng, lỗi API (hiển thị UI thân thiện), lỗi sai thông tin mật khẩu. | Khối lệnh `try-catch`, trạng thái `snapshot.hasError` của `FutureBuilder` |
+
+---
+
+## 4. CHI TIẾT TÍCH HỢP PUBLIC REST API
+
+Dự án sử dụng **TheMealDB API** – một hệ thống dữ liệu mở, miễn phí và có cấu trúc dữ liệu JSON chuẩn hóa, cực kỳ phù hợp cho môi trường phát triển ứng dụng di động:
+
+- **Cơ chế hoạt động:** Ứng dụng Flutter (Client) gửi yêu cầu (HTTP Request) lên Server của TheMealDB thông qua API Key miễn phí là `1`. Server xử lý và trả về cấu trúc dữ liệu JSON để ứng dụng parse thành các Object trong Dart thông qua Model Class (ví dụ: `MealModel`).
+- **Các Endpoints cụ thể được sử dụng trong mã nguồn:**
+  - *Lấy danh sách món mặc định (Trang Home):* `https://www.themealdb.com/api/json/v1/1/search.php?f=b` (Lấy các món ăn bắt đầu bằng ký tự 'b').
+  - *Chức năng tìm kiếm (Search):* `https://www.themealdb.com/api/json/v1/1/search.php?s={keyword}` (Thay thế `{keyword}` bằng dữ liệu người dùng nhập).
+  - *Chức năng lọc danh mục (Filter):* `https://www.themealdb.com/api/json/v1/1/filter.php?c={category}` (Ví dụ: `c=Seafood` hoặc `c=Vegetarian`).
+  - *Xem chi tiết món ăn:* `https://www.themealdb.com/api/json/v1/1/lookup.php?i={idMeal}` (Dùng ID nhận được để truy vấn toàn bộ nguyên liệu và các bước hướng dẫn).
+
+---
+
+## 5. LỘ TRÌNH TRIỂN KHAI MVP (IMPLEMENTATION STEPS)
+
+Tiến trình công việc được chia thành 5 giai đoạn (Sprint) rõ ràng, sử dụng Git & GitHub để quản lý phiên bản và mã nguồn trên VS Code:
+
+### Giai đoạn 1: Khởi tạo hệ thống & Kiến trúc (Setup & Architecture)
+- Khởi tạo dự án Flutter bằng câu lệnh cấu hình cơ bản.
+- Thiết lập repository trên GitHub, cấu hình quy tắc phân nhánh (branching strategy).
+- Tích hợp Firebase (Android/iOS) bằng hệ thống Firebase CLI.
+- Định hình cấu trúc thư mục dự án phân tách rõ ràng (thư mục chứa `views/widgets`, thư mục chứa `models`, và thư mục chứa `services/api`).
+
+### Giai đoạn 2: Quản lý Xác thực Người dùng (User Authentication)
+- Thiết kế UI màn hình Đăng nhập, Đăng ký và Quên mật khẩu.
+- Viết logic kết nối dịch vụ `FirebaseAuth`.
+- Quản lý trạng thái người dùng (Auth State) để tự động điều hướng: Nếu đã có phiên đăng nhập trước đó -> Vào thẳng trang Home, ngược lại -> Điều hướng sang màn hình Login.
+
+### Giai đoạn 3: Tích hợp REST API & Tìm kiếm (Dữ liệu công khai)
+- Phân tích cấu trúc JSON từ TheMealDB API, viết các Model class chuyển đổi dữ liệu (`fromJson`, `toJson`).
+- Tích hợp package kết nối mạng (`http` hoặc `dio`) để gọi API lấy danh sách thực phẩm.
+- Hoàn thiện màn hình Home hiển thị dữ liệu động dạng `GridView` hoặc `ListView`.
+- Xây dựng thanh Tìm kiếm và bộ lọc danh mục (Truyền các tham số query trực tiếp vào URL API).
+
+### Giai đoạn 4: Liên kết Firestore CRUD & Hồ sơ (Dữ liệu cá nhân)
+- Tạo schema cấu trúc dữ liệu trên Firestore (Collection `users` chứa thông tin cá nhân và Sub-collection `favorites` chứa danh sách món yêu thích).
+- Viết logic cho luồng "Thêm/Xóa/Cập nhật ghi chú" món ăn yêu thích, đồng bộ thời gian thực.
+- Hoàn thiện màn hình User Profile, xử lý luồng cập nhật các chỉ số sức khỏe cá nhân.
+
+### Giai đoạn 5: Tối ưu UI/UX & Kiểm thử thiết bị thật (Polish & Device Testing)
+- Refactor mã nguồn, đóng gói các thành phần giao diện trùng lặp thành các widget dùng chung (Reusable Widgets) nhằm đạt điểm tối đa cấu trúc kiến trúc (20đ).
+- Kiểm tra toàn bộ hệ thống Input Validation và hiển thị thông báo lỗi thân thiện qua `SnackBar`/`Dialog` (Exception handling).
+- **Đặc biệt lưu ý:** Thực hiện build ứng dụng ra file APK, kết nối cáp vật lý và tiến hành kiểm thử toàn diện trên thiết bị di động Android thật. Đảm bảo giao diện phản hồi tốt (Responsive), không xảy ra lỗi tràn viền hoặc crash ứng dụng, sẵn sàng 100% cho buổi báo cáo trực tiếp (Live Demonstration) trước hội đồng.
