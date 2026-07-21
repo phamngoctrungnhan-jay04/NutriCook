@@ -6,32 +6,33 @@ Tài liệu này quy định ngôn ngữ thiết kế (design language) cho toà
 
 ## Design Style
 
-- **Phong cách tổng thể:** Clean & Modern, tối giản (minimalist), lấy cảm hứng từ Material Design 3 (Material You) — vì đây là ngôn ngữ thiết kế mặc định, dễ triển khai nhất trên Flutter, tài liệu phong phú, phù hợp MVP.
-- **Cảm xúc thiết kế cần truyền tải:** ấm áp, ngon miệng, đáng tin cậy (gợi cảm giác thực phẩm tươi/lành mạnh), nhưng vẫn gọn gàng, không rối mắt — đúng với pain point "trải nghiệm tinh gọn, tập trung hoàn toàn vào việc nấu ăn" đã nêu trong yêu cầu dự án.
-- **Ưu tiên nội dung hơn trang trí:** hình ảnh món ăn là trọng tâm thị giác chính trên mọi màn hình danh sách; UI chrome (viền, nền, khung) phải lùi lại làm nền cho ảnh món ăn, không cạnh tranh sự chú ý.
-- **Nhất quán:** mọi màn hình dùng chung một bộ token thiết kế (màu, spacing, typography, bo góc) định nghĩa trong tài liệu này — không tự sáng tạo giá trị mới ở từng màn hình riêng lẻ.
+- **Phong cách tổng thể: Neubrutalism** (viền đen/trắng liền nét 2px + bóng đổ cứng, offset thuần không mờ + chữ đậm) — đổi từ Material Design 3 mềm mại ban đầu, theo yêu cầu áp dụng UI tham khảo thực tế (form đăng nhập nền xanh nhạt, input/button be, viền đen). Áp dụng **toàn app** (không riêng màn Auth): Button, TextField, Card, Chip, Dialog đều dùng chung ngôn ngữ viền + bóng cứng này.
+- **Cảm xúc thiết kế cần truyền tải:** rõ ràng, chắc chắn, có cá tính (graphic, tương phản mạnh) — khác hẳn tinh thần "mềm mại, ấm áp" của bản Material 3 cũ, đổi theo đúng phong cách tham khảo.
+- **Ưu tiên nội dung hơn trang trí:** hình ảnh món ăn vẫn là trọng tâm thị giác chính trên danh sách — viền/bóng cứng bao quanh Card chỉ đóng vai trò khung, không cạnh tranh với ảnh bên trong.
+- **Nhất quán:** mọi màn hình dùng chung một bộ token thiết kế (màu, spacing, typography, bo góc, viền/bóng cứng) định nghĩa trong tài liệu này — không tự sáng tạo giá trị mới ở từng màn hình riêng lẻ.
 
 ---
 
 ## Color Palette
 
-Palette lấy tông màu ấm, gợi thực phẩm/sức khỏe, có đủ độ tương phản để dùng tốt cả Light/Dark mode.
+Đổi hoàn toàn theo bảng màu CSS tham khảo (biến `--bg-color: beige`, nền `lightblue`, accent `--input-focus: #2d8cf0`, viền/bóng `--main-color: black`) — không còn dùng tông cam/be ấm ban đầu.
 
 | Vai trò | Light Mode | Dark Mode | Ghi chú |
 |---|---|---|---|
-| **Primary** | Cam đất ấm (warm orange, ví dụ tông `#E8622C` – `#FF7A45`) | Cùng tông nhưng giảm độ chói (~10-15%) | Dùng cho nút hành động chính, icon yêu thích khi active, tab đang chọn. Gợi cảm giác "ngon miệng" mà không chọn đỏ (dễ liên tưởng cảnh báo/lỗi). |
-| **Secondary** | Xanh lá tự nhiên (fresh green, ví dụ `#4C9A6A`) | Sáng hơn một chút để nổi trên nền tối | Dùng cho biểu tượng liên quan sức khỏe/dinh dưỡng (calo, chỉ số cơ thể), trạng thái thành công. |
-| **Background** | Trắng ngà / xám rất nhạt (`#FAFAF7`) | Xám than đậm (`#121212` theo chuẩn Material Dark), không dùng đen tuyệt đối | Đen tuyệt đối gây chói tương phản khó chịu khi dùng lâu trong bếp tối. |
-| **Surface (Card/Sheet)** | Trắng thuần (`#FFFFFF`) | Xám đậm hơn nền một bậc (`#1E1E1E`) | Tạo phân lớp (elevation) rõ ràng giữa nền và các khối nội dung. |
-| **Error** | Đỏ chuẩn Material (`#BA1A1A`) | Đỏ nhạt hơn để không chói (`#FFB4AB`) | Dùng riêng biệt cho trạng thái lỗi, không trộn với Primary. |
-| **Text Primary** | Gần đen (`#1B1B1B`) | Trắng ngà (`#F2F2F2`) | Đảm bảo tỷ lệ tương phản ≥ 4.5:1 theo WCAG AA. |
-| **Text Secondary** | Xám trung (`#6B6B6B`) | Xám sáng (`#A8A8A8`) | Dùng cho caption, mô tả phụ, timestamp. |
-| **Divider/Border** | Xám rất nhạt (`#E4E4E0`) | Xám đậm (`#2C2C2C`) | Dùng tối thiểu, ưu tiên spacing/elevation hơn đường kẻ. |
+| **Primary (Accent)** | Xanh dương (`#2D8CF0`, đúng `--input-focus` trong CSS gốc) | Xanh dương sáng hơn (`#5B9FF2`) để nổi trên nền tối | Dùng cho: viền TextField khi focus, link/Text Button ("Quên mật khẩu?"), icon yêu thích khi active, tab đang chọn. **Không** dùng làm màu nền Button chính (xem Button Design). |
+| **Secondary** | Xanh lá tự nhiên (`#4C9A6A`, giữ nguyên từ bản cũ) | Sáng hơn (`#6FBF8C`) | Dùng cho ngữ cảnh sức khỏe/dinh dưỡng (BMI, trạng thái thành công) — CSS tham khảo không định nghĩa màu này, giữ lại vì app cần phân biệt ngữ cảnh y tế. |
+| **Background** | Xanh dương nhạt (`#ADD8E6`, đúng `lightblue` trong CSS gốc) | Xanh navy đậm (`#14212B`, suy diễn tương đồng — bản gốc không có Dark Mode) | Nền toàn màn hình (Scaffold). |
+| **Surface (Card/Button/TextField/Sheet)** | Be (`#F5F5DC`, đúng `beige` trong CSS gốc) | Be đậm/ám nâu (`#2B2920`, suy diễn tương đồng) | Dùng cho nền Card, Button, TextField, Dialog, BottomSheet, NavigationBar. |
+| **Error** | Đỏ chuẩn Material (`#BA1A1A`) | Đỏ nhạt hơn (`#FFB4AB`) | Giữ nguyên — CSS tham khảo không có trạng thái lỗi, dùng quy ước phổ biến. |
+| **Text Primary** | Xám rất đậm gần đen (`#323232`, đúng `--font-color`) | Trắng ngà (`#F2F2F2`) | Đảm bảo tỷ lệ tương phản ≥ 4.5:1 theo WCAG AA. |
+| **Text Secondary** | Xám trung (`#666666`, đúng `--font-color-sub`) | Xám sáng (`#A8A8A8`) | Dùng cho caption, placeholder, mô tả phụ. |
+| **Border/Shadow (Hard Border)** | Đen tuyệt đối (`#000000`, đúng `--main-color: black`) | Trắng tuyệt đối (`#FFFFFF`) | Dùng thống nhất cho viền 2px **và** bóng đổ cứng của Button/TextField/Card/Dialog/Chip (xem mục Shadow) — cùng 1 token, không tách riêng "divider mờ" như bản Material cũ. |
 
 **Nguyên tắc dùng màu:**
-- Không dùng quá 2 màu chủ đạo (Primary + Secondary) cho hành động; mọi màu khác chỉ đóng vai trò nền/văn bản/trạng thái.
-- Màu Error chỉ dùng cho lỗi thật (không dùng đỏ cho mục đích trang trí).
-- Icon "Yêu thích" (trái tim) dùng Primary khi active, Text Secondary khi inactive — không dùng đỏ mặc định của hệ thống để tránh xung đột với màu Error.
+- **Button chính không tô màu Accent** — nền Button dùng màu Surface (be/be-đậm) + chữ Text Primary (đen/trắng), đúng khớp `.button-confirm` trong CSS tham khảo (nút không màu, chỉ viền/chữ đậm). Đây là khác biệt lớn nhất so với quy ước Material thông thường ("nút chính luôn tô màu thương hiệu").
+- Primary (xanh dương) chỉ dùng cho các điểm nhấn tương tác nhỏ: viền focus, link, icon active, tab active — không dùng làm nền diện rộng.
+- Màu Error chỉ dùng cho lỗi thật (không dùng cho mục đích trang trí).
+- Icon "Yêu thích" (trái tim) dùng Primary khi active, Text Secondary khi inactive.
 
 ---
 
@@ -106,41 +107,46 @@ Nguyên tắc: bán kính tăng dần theo cấp độ "nổi bật/nổi khối
 
 ## Shadow
 
-- Dùng **elevation tối giản** theo tinh thần Material 3 — ưu tiên phân lớp bằng màu Surface khác biệt (xem Color Palette) hơn là đổ bóng đậm.
-- **Card (Meal Card, Favorite Item):** shadow rất nhẹ, `blur ~8px`, `opacity ~6-8%`, màu đen trung tính — đủ để tách khỏi nền, không tạo cảm giác nặng nề.
-- **AppBar khi cuộn (scrolled):** elevation nhẹ xuất hiện khi nội dung cuộn lên dưới AppBar, biến mất khi ở đầu trang (dynamic elevation) — giúp phân định ranh giới mà không cần đường kẻ cứng.
-- **Dialog/Bottom Sheet:** shadow rõ hơn Card một chút (`blur ~16px`, `opacity ~12%`) để nhấn mạnh lớp nổi trên cùng.
-- **Dark Mode:** giảm shadow tối đa (gần như không dùng), thay bằng chênh lệch màu Surface — shadow đen trên nền tối gần như vô hình và gây lãng phí hiệu năng.
+**Đổi hoàn toàn sang "Hard Shadow" (Neubrutalism), áp dụng toàn app** — không còn shadow mờ/elevation kiểu Material 3 cũ. Đây là thay đổi lan rộng: Button, TextField, Card, Chip, Dialog đều dùng chung 1 kiểu bóng dưới đây.
+
+- **Kiểu bóng:** offset thuần `(4px, 4px)`, **không mờ** (`blur = 0`), màu đen tuyệt đối (Light Mode) / trắng tuyệt đối (Dark Mode).
+- **Luôn đi kèm viền cứng 2px** cùng màu với bóng — 2 yếu tố này xuất hiện cùng nhau ở mọi thành phần, không có viền mà thiếu bóng hoặc ngược lại.
+- **Phạm vi áp dụng: toàn bộ widget tương tác/chứa nội dung** — `PrimaryButton`, `SecondaryButton`, `AppTextField`, `SocialLoginButton`, `Card` (Meal Card, BMI Card), `Chip` (category filter), `Dialog`. **Không áp dụng cho `Text Button`** (giữ tối giản, không viền/bóng — xem Button Design).
+- **Giới hạn kỹ thuật:** Flutter's Material `ElevatedButton`/`OutlinedButton`/`Card` không hỗ trợ trực tiếp "box-shadow cứng" qua `elevation` (chỉ có thuật toán shadow mờ riêng của Material) — các widget này được bọc thêm 1 lớp `Container`/`BoxDecoration` để vẽ đúng bóng cứng, tắt `elevation` gốc của Material để tránh chồng 2 lớp bóng. Riêng `Chip`/`Dialog` dùng được `side`/`shape` có sẵn của Material nên chỉ cần thêm viền qua theme, không cần bọc `Container` riêng.
+- **Không tái tạo hiệu ứng "nhấn lún" của bản tham khảo gốc** (bóng biến mất + dịch chuyển 3px khi nhấn) — giữ nguyên hiệu ứng ripple mặc định của Material để không phải viết lại toàn bộ animation nhấn cho từng widget; có thể bổ sung sau nếu cần đúng 100% cảm giác bản gốc.
+- **AppBar/BottomNavigation:** không có viền/bóng cứng riêng (Material tự xử lý phân lớp qua `scrolledUnderElevation`) — tránh phình phạm vi thay đổi vào các thành phần điều hướng cấp cao.
 
 ---
 
 ## Button Design
 
-- **Primary Button** (hành động chính: Đăng nhập, Lưu, Đăng ký...): nền màu Primary, chữ trắng, bo góc 12px, chiều cao tối thiểu 48px (đảm bảo vùng chạm ≥ 48dp theo chuẩn accessibility), full-width trong các form quan trọng.
-- **Secondary/Outlined Button** (hành động phụ: Hủy, Quay lại): viền màu Primary, nền trong suốt, chữ màu Primary.
-- **Text Button** (hành động ít quan trọng nhất: "Quên mật khẩu?", "Chưa có tài khoản? Đăng ký"): không nền, không viền, chỉ có chữ màu Primary.
+- **Primary Button** (hành động chính: Đăng nhập, Lưu, Đăng ký...): nền màu **Surface** (be/be-đậm, **không** tô màu Primary), chữ Text Primary (đen/trắng), bo góc 12px, viền cứng 2px + Hard Shadow (xem mục Shadow), chiều cao tối thiểu 48px, full-width trong các form quan trọng. Khớp đúng `.button-confirm` của CSS tham khảo — đây là khác biệt lớn nhất so với quy ước Material thông thường.
+- **Secondary/Outlined Button** (hành động phụ: Hủy, Quay lại): nền trong suốt, viền cứng 2px + Hard Shadow, chữ Text Primary (đen/trắng).
+- **Text Button** (hành động ít quan trọng nhất: "Quên mật khẩu?", "Chưa có tài khoản? Đăng ký"): không nền, không viền, không shadow, chỉ có chữ màu Primary — **không** áp dụng Hard Shadow (giữ tối giản cho hành động phụ).
 - **Icon Button** (nút trái tim, nút back, nút search): vùng chạm tối thiểu 44×44dp dù icon hiển thị nhỏ hơn, có hiệu ứng ripple/feedback khi nhấn.
-- **Trạng thái Disabled:** giảm opacity nền/chữ xuống ~38%, không đổi màu sang xám riêng biệt (giữ tông Primary nhưng nhạt) — nhất quán với Material 3.
+- **Social Login Button** (ví dụ Google): hình tròn 44×44dp, viền cứng 2px + Hard Shadow, biểu tượng là chữ cái đậm (ví dụ "G") thay vì logo SVG thương hiệu — tránh thêm asset/package ngoài cho MVP. **Chỉ dùng Google** (không có Facebook/Twitter — đã loại bỏ theo yêu cầu thực tế, và vì Facebook/Google Sign-In vẫn nằm trong Out of Scope của `PROJECT_REQUIREMENTS.md` cho tới khi được xác nhận triển khai thật).
+- **Trạng thái Disabled:** giảm opacity nền/chữ xuống ~38%, tắt Hard Shadow (không có bóng khi nút không thể bấm) — nhất quán với Material 3.
 - **Trạng thái Loading trên nút** (ví dụ khi đang submit đăng nhập): thay label bằng spinner nhỏ (kích thước ~20px) căn giữa, giữ nguyên kích thước nút, vô hiệu hóa thao tác lặp lại trong lúc chờ.
 
 ---
 
 ## TextField Design
 
-- **Kiểu:** Outlined TextField (viền mảnh, không dùng kiểu underline hoặc filled đậm) — rõ ràng, dễ nhận biết vùng nhập trên mọi nền màu.
-- **Bo góc:** 12px, viền mặc định màu Divider, viền màu Primary khi focus, viền màu Error khi có lỗi validation.
+- **Kiểu:** Outlined TextField với viền cứng 2px (đen/trắng theo theme) + Hard Shadow bọc ngoài — khác bản gốc "viền mảnh" trước đây, đổi theo yêu cầu tham khảo UI thực tế.
+- **Bo góc:** 12px, viền màu đen/trắng cứng khi bình thường, đổi sang màu Primary khi focus (dày hơn, 2px), viền màu Error khi có lỗi validation — Hard Shadow giữ nguyên trong mọi trạng thái trừ khi field bị disable.
 - **Label:** dùng floating label (label thu nhỏ lên trên viền khi field có nội dung/focus) — tiết kiệm không gian, không cần thêm placeholder trùng lặp.
 - **Validation error:** hiển thị message lỗi ngay dưới field bằng màu Error, font Caption (12sp), kèm đổi màu viền field sang Error — người dùng thấy phản hồi tức thời mà không cần chờ submit toàn form.
 - **Password field:** luôn có icon toggle ẩn/hiện mật khẩu ở cuối field.
 - **Padding nội bộ:** tối thiểu 16px ngang, 12–14px dọc, đảm bảo dễ chạm và dễ đọc.
+- **Trạng thái Disabled:** tắt Hard Shadow (đồng bộ quy tắc với Button Disabled ở trên).
 
 ---
 
 ## Card Design
 
 - **Meal Card (Home/Search/Filter):** ảnh món ăn chiếm phần trên (tỷ lệ 4:3 hoặc 1:1), tên món bên dưới (Title style, tối đa 2 dòng, overflow ellipsis), có thể thêm badge nhỏ (calo ước tính) ở góc ảnh nếu dữ liệu sẵn có. Toàn bộ Card có thể nhấn (tap toàn vùng, không chỉ riêng ảnh).
-- **Favorite List Item:** dạng hàng ngang — ảnh thumbnail nhỏ bên trái (kích thước cố định, ví dụ 72×72px, bo góc 12px), tên món + ghi chú rút gọn (nếu có) bên phải, hỗ trợ thao tác vuốt để lộ nút xóa (swipe-to-delete).
-- **Elevation:** dùng shadow nhẹ theo mục Shadow ở trên; không viền cứng bao quanh Card (border) trừ khi ở trạng thái selected/pressed.
+- **Favorite List Item:** dạng hàng ngang — ảnh thumbnail nhỏ bên trái (kích thước cố định, ví dụ 72×72px, bo góc 12px), tên món + ghi chú rút gọn (nếu có) bên phải, hỗ trợ thao tác vuốt để lộ nút xóa (swipe-to-delete). Chưa áp dụng viền/bóng cứng riêng cho từng dòng (là hàng trong danh sách, không phải khối nổi độc lập như Meal Card/BMI Card).
+- **Elevation:** dùng **Hard Shadow** (viền cứng 2px + bóng offset, xem mục Shadow) — đã đổi từ shadow mềm Material 3 ban đầu, áp dụng cho Meal Card và BMI Card.
 - **Khoảng cách nội dung trong Card:** padding `spacing-md` (16px) giữa mép Card và nội dung text.
 
 ---

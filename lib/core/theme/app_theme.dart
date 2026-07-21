@@ -24,6 +24,8 @@ class AppTheme {
     final error = isDark ? AppColors.darkError : AppColors.lightError;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    // `divider` đồng thời là màu viền/bóng cứng (Neubrutalism) — đen ở Light,
+    // trắng ở Dark, dùng thống nhất cho Button/TextField/Card/Dialog/Chip.
     final divider = isDark ? AppColors.darkDivider : AppColors.lightDivider;
 
     final colorScheme = ColorScheme(
@@ -60,24 +62,31 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: surface,
-        elevation: isDark ? 0 : 1,
-        shadowColor: Colors.black.withValues(alpha: isDark ? 0 : 0.08),
+        elevation: 0,
         margin: EdgeInsets.zero,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.cardRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.cardRadius,
+          side: BorderSide(color: divider, width: 2),
+        ),
       ),
+      // Primary Button: nền be (Surface) + chữ đen, khớp đúng `.button-confirm`
+      // của CSS tham khảo (nút không tô màu accent, chỉ viền/chữ đen).
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primary,
-          foregroundColor: Colors.white,
+          backgroundColor: surface,
+          foregroundColor: textPrimary,
           minimumSize: const Size.fromHeight(48),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.buttonRadius),
+          shape: RoundedRectangleBorder(
+            borderRadius: AppRadius.buttonRadius,
+            side: BorderSide(color: divider, width: 2),
+          ),
           textStyle: textTheme.labelLarge,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: primary,
-          side: BorderSide(color: primary),
+          foregroundColor: textPrimary,
+          side: BorderSide(color: divider, width: 2),
           minimumSize: const Size.fromHeight(48),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.buttonRadius),
           textStyle: textTheme.labelLarge,
@@ -90,16 +99,17 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        filled: false,
+        filled: true,
+        fillColor: surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         labelStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
         border: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
-          borderSide: BorderSide(color: divider),
+          borderSide: BorderSide(color: divider, width: 2),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
-          borderSide: BorderSide(color: divider),
+          borderSide: BorderSide(color: divider, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
@@ -107,7 +117,7 @@ class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
-          borderSide: BorderSide(color: error),
+          borderSide: BorderSide(color: error, width: 2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
@@ -116,12 +126,15 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
-        indicatorColor: primary.withValues(alpha: 0.15),
+        indicatorColor: primary.withValues(alpha: 0.25),
         labelTextStyle: WidgetStateProperty.all(textTheme.labelMedium),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.dialogRadius),
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.dialogRadius,
+          side: BorderSide(color: divider, width: 2),
+        ),
         titleTextStyle: textTheme.titleLarge,
         contentTextStyle: textTheme.bodyMedium,
       ),
@@ -133,9 +146,9 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surface,
-        selectedColor: primary.withValues(alpha: 0.15),
+        selectedColor: primary.withValues(alpha: 0.25),
         labelStyle: textTheme.labelMedium,
-        side: BorderSide(color: divider),
+        side: BorderSide(color: divider, width: 2),
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.chipRadius),
       ),
     );

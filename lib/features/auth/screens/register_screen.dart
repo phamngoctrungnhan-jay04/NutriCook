@@ -6,6 +6,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/widgets/social_login_button.dart';
 import '../providers/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -35,6 +36,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
   }
 
+  void _handleGoogleSignIn() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Đăng nhập bằng Google chưa khả dụng.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
@@ -49,7 +56,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Đăng ký', style: theme.textTheme.headlineSmall),
+                Text('Đăng ký,', style: theme.textTheme.headlineSmall),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  'tạo tài khoản để bắt đầu',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.textTheme.labelMedium?.color,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 AppTextField(
                   label: 'Email',
@@ -85,6 +99,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(color: theme.colorScheme.error),
                   ),
                 ],
+                const SizedBox(height: AppSpacing.lg),
+                Center(
+                  child: SocialLoginButton(label: 'G', onPressed: _handleGoogleSignIn),
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   label: 'Đăng ký',

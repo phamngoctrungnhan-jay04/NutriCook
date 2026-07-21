@@ -28,4 +28,13 @@ class AppShadows {
       ),
     ];
   }
+
+  /// Bóng đổ "cứng" (offset thuần, không mờ, không tràn) — phong cách
+  /// Neubrutalism, dùng cho Button/TextField/SocialLoginButton theo yêu cầu
+  /// bổ sung (xem UI_UX_GUIDELINES.md mục Button Design — Neubrutalism
+  /// Variant). Dark Mode dùng màu trắng để vẫn nổi trên nền tối.
+  static List<BoxShadow> hard(Brightness brightness) {
+    final color = brightness == Brightness.dark ? Colors.white : Colors.black;
+    return [BoxShadow(color: color, offset: const Offset(4, 4))];
+  }
 }
