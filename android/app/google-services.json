@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1021484594240",
-    "project_id": "nutricook-prm",
-    "storage_bucket": "nutricook-prm.firebasestorage.app"
+    "project_number": "595471141555",
+    "project_id": "nutricook-prm393",
+    "storage_bucket": "nutricook-prm393.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1021484594240:android:2ac7fc20cdb9991015dba5",
+        "mobilesdk_app_id": "1:595471141555:android:3c32615783afad60c8bec6",
         "android_client_info": {
-          "package_name": "com.example.nutri_cook"
+          "package_name": "com.teamwizards.nutricook"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBqpsVUVxK0BBP-fLaVc8Wq_FRjLxQukBA"
+          "current_key": "AIzaSyDYAmtCWxci1tKCsODCzyr_io15GWmdwg4"
         }
       ],
       "services": {

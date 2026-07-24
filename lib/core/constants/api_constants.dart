@@ -9,4 +9,6 @@ class ApiConstants {
   static const String filterEndpoint = 'filter.php';
   static const String lookupEndpoint = 'lookup.php';
   static const String categoryListEndpoint = 'list.php';
+  static const String randomEndpoint = 'random.php';
+  static const String categoriesEndpoint = 'categories.php';
 }

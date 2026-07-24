@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_radius.dart';
-import '../theme/app_shadows.dart';
-
-/// TextField chuẩn hóa, dùng decoration từ AppTheme.inputDecorationTheme (viền
-/// cứng đã cấu hình sẵn), bọc thêm bóng đổ cứng (AppShadows.hard) — đồng bộ
-/// Neubrutalism với Button. `obscureText: true` tự thêm icon toggle ẩn/hiện.
+/// TextField chuẩn hóa, dùng decoration từ AppTheme.inputDecorationTheme.
+/// `obscureText: true` tự thêm icon toggle ẩn/hiện (dùng cho ô mật khẩu).
 class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
@@ -41,31 +37,23 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: AppRadius.textFieldRadius,
-        boxShadow: widget.enabled ? AppShadows.hard(theme.brightness) : const [],
-      ),
-      child: TextFormField(
-        controller: widget.controller,
-        obscureText: _obscure,
-        keyboardType: widget.keyboardType,
-        validator: widget.validator,
-        onChanged: widget.onChanged,
-        enabled: widget.enabled,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          suffixIcon: widget.obscureText
-              ? IconButton(
-                  icon: Icon(
-                    _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                  ),
-                  onPressed: () => setState(() => _obscure = !_obscure),
-                )
-              : null,
-        ),
+    return TextFormField(
+      controller: widget.controller,
+      obscureText: _obscure,
+      keyboardType: widget.keyboardType,
+      validator: widget.validator,
+      onChanged: widget.onChanged,
+      enabled: widget.enabled,
+      decoration: InputDecoration(
+        labelText: widget.label,
+        suffixIcon: widget.obscureText
+            ? IconButton(
+                icon: Icon(
+                  _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              )
+            : null,
       ),
     );
   }

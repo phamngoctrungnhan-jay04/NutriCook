@@ -46,7 +46,7 @@ Phạm vi MVP bao gồm:
 
 Các hạng mục sau **không** thuộc phạm vi MVP hiện tại (có thể cân nhắc ở giai đoạn mở rộng sau này — xem mục Future Enhancements):
 
-- Đăng nhập bằng mạng xã hội (Google, Facebook Sign-In) — logic thật chưa triển khai. **Lưu ý:** UI Login/Register hiện đã có sẵn nút "Đăng nhập bằng Google" (theo yêu cầu chỉnh UI thực tế), nhưng bấm vào chỉ hiện thông báo "chưa khả dụng" — chưa gọi `google_sign_in`/Firebase Google provider thật. Cần xác nhận riêng nếu muốn triển khai đầy đủ (yêu cầu thêm: package `google_sign_in`, bật Google provider trên Firebase Console, cấu hình OAuth Client ID + SHA-1 fingerprint/URL scheme).
+- Đăng nhập bằng mạng xã hội (Google, Facebook Sign-In).
 - Đặt lại mật khẩu qua email thực tế (Forgot Password) — dù đề bài Giai đoạn 2 có nhắc thiết kế UI, nhưng logic gửi email khôi phục không nằm trong barem điểm bắt buộc, cần làm rõ trước khi triển khai (xem mục "Nếu phát hiện requirement còn thiếu").
 - Vai trò Admin / trang quản trị nội dung (không có yêu cầu quản trị món ăn, quản lý người dùng trong đề bài gốc).
 - Tự tạo/chỉnh sửa công thức nấu ăn mới (chỉ tiêu thụ dữ liệu từ TheMealDB, không có CRUD công thức gốc).

@@ -11,12 +11,18 @@ class MealDetailSliverAppBar extends StatelessWidget {
     required this.isFavorited,
     required this.isToggling,
     required this.onToggleFavorite,
+    this.isCustom = false,
+    this.onEdit,
+    this.onDelete,
   });
 
   final String imageUrl;
   final bool isFavorited;
   final bool isToggling;
   final VoidCallback onToggleFavorite;
+  final bool isCustom;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +35,31 @@ class MealDetailSliverAppBar extends StatelessWidget {
         background: AppNetworkImage(url: imageUrl, fit: BoxFit.cover),
       ),
       actions: [
-        IconButton(
-          onPressed: isToggling ? null : onToggleFavorite,
-          icon: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) =>
-                ScaleTransition(scale: animation, child: child),
-            child: Icon(
-              isFavorited ? Icons.favorite : Icons.favorite_border,
-              key: ValueKey<bool>(isFavorited),
-              color: isFavorited ? theme.colorScheme.primary : Colors.white,
+        if (isCustom) ...[
+          if (onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              onPressed: onEdit,
+            ),
+          if (onDelete != null)
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.white),
+              onPressed: onDelete,
+            ),
+        ] else
+          IconButton(
+            onPressed: isToggling ? null : onToggleFavorite,
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Icon(
+                isFavorited ? Icons.favorite : Icons.favorite_border,
+                key: ValueKey<bool>(isFavorited),
+                color: isFavorited ? theme.colorScheme.primary : Colors.white,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

@@ -22,4 +22,11 @@ class HomeRepositoryImpl implements HomeRepository {
 
   @override
   Future<List<String>> getCategories() => _service.getCategories();
+
+  @override
+  Future<List<String>> getIngredients() => _service.getIngredients();
+
+  @override
+  Future<List<MealModel>> filterByIngredient(String ingredient) =>
+      _service.filterByIngredient(ingredient);
 }

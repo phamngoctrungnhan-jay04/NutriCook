@@ -6,7 +6,6 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/widgets/social_login_button.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -36,12 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
   }
 
-  void _handleGoogleSignIn() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đăng nhập bằng Google chưa khả dụng.')),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
@@ -56,14 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Đăng nhập,', style: theme.textTheme.headlineSmall),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  'chào mừng bạn quay lại',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.textTheme.labelMedium?.color,
-                  ),
-                ),
+                Text('Đăng nhập', style: theme.textTheme.headlineSmall),
                 const SizedBox(height: AppSpacing.lg),
                 AppTextField(
                   label: 'Email',
@@ -100,10 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
                 const SizedBox(height: AppSpacing.lg),
-                Center(
-                  child: SocialLoginButton(label: 'G', onPressed: _handleGoogleSignIn),
-                ),
-                const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   label: 'Đăng nhập',
                   isLoading: authProvider.isLoading,
@@ -113,6 +95,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextButton(
                   onPressed: () => context.go(AppRoutes.forgotPassword),
                   child: const Text('Quên mật khẩu?'),
+                ),
+                TextButton(
+                  onPressed: () => context.go(AppRoutes.register),
+                  child: const Text('Chưa có tài khoản? Đăng ký'),
                 ),
               ],
             ),

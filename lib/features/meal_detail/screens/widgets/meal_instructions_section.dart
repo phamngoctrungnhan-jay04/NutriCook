@@ -16,12 +16,18 @@ class MealInstructionsSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.lg, AppSpacing.md, AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ExpansionTile(
+        title: Text('Instructions', style: theme.textTheme.titleLarge),
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(top: AppSpacing.sm),
+        initiallyExpanded: false,
+        shape: const Border(),
+        collapsedShape: const Border(),
         children: [
-          Text('Hướng dẫn thực hiện', style: theme.textTheme.titleLarge),
-          const SizedBox(height: AppSpacing.sm),
-          Text(text, style: theme.textTheme.bodyMedium),
+          Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+          ),
         ],
       ),
     );

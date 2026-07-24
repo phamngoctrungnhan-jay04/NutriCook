@@ -1,1 +1,27 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"nutricook-prm","appId":"1:1021484594240:android:2ac7fc20cdb9991015dba5","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"nutricook-prm","appId":"1:1021484594240:ios:77b130d3aef56e4d15dba5","uploadDebugSymbols":true,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"nutricook-prm","configurations":{"android":"1:1021484594240:android:2ac7fc20cdb9991015dba5","ios":"1:1021484594240:ios:77b130d3aef56e4d15dba5"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "nutricook-prm393",
+          "appId": "1:595471141555:android:3c32615783afad60c8bec6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "nutricook-prm393",
+          "configurations": {
+            "android": "1:595471141555:android:3c32615783afad60c8bec6"
+          }
+        }
+      }
+    }
+  }
+}

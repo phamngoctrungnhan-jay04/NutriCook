@@ -4,14 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
-import 'core/storage/hive_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await HiveService.init();
 
   // Không báo cáo crash khi chạy debug trên máy phát triển, tránh làm nhiễu
   // Crashlytics dashboard bằng lỗi phát sinh lúc code chưa hoàn chỉnh.

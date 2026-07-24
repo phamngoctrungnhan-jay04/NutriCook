@@ -26,7 +26,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -50,19 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBqpsVUVxK0BBP-fLaVc8Wq_FRjLxQukBA',
-    appId: '1:1021484594240:android:2ac7fc20cdb9991015dba5',
-    messagingSenderId: '1021484594240',
-    projectId: 'nutricook-prm',
-    storageBucket: 'nutricook-prm.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC4aQpGfjybh-Hk3gdfvugOG37ucie743w',
-    appId: '1:1021484594240:ios:77b130d3aef56e4d15dba5',
-    messagingSenderId: '1021484594240',
-    projectId: 'nutricook-prm',
-    storageBucket: 'nutricook-prm.firebasestorage.app',
-    iosBundleId: 'com.example.nutriCook',
+    apiKey: 'AIzaSyDYAmtCWxci1tKCsODCzyr_io15GWmdwg4',
+    appId: '1:595471141555:android:3c32615783afad60c8bec6',
+    messagingSenderId: '595471141555',
+    projectId: 'nutricook-prm393',
+    storageBucket: 'nutricook-prm393.firebasestorage.app',
   );
 }

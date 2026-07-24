@@ -14,9 +14,9 @@ class ProfileSettingsSection extends StatelessWidget {
   Future<void> _handleLogout(BuildContext context) async {
     final confirmed = await ConfirmDialog.show(
       context,
-      title: 'Đăng xuất',
-      message: 'Bạn có chắc muốn đăng xuất khỏi NutriCook?',
-      confirmLabel: 'Đăng xuất',
+      title: 'Logout',
+      message: 'Are you sure you want to logout of NutriCook?',
+      confirmLabel: 'Logout',
       isDestructive: true,
     );
     if (!confirmed || !context.mounted) return;
@@ -32,11 +32,11 @@ class ProfileSettingsSection extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          child: Text('Cài đặt', style: theme.textTheme.titleLarge),
+          child: Text('Settings', style: theme.textTheme.titleLarge),
         ),
         ListTile(
           leading: Icon(Icons.logout, color: theme.colorScheme.error),
-          title: const Text('Đăng xuất'),
+          title: const Text('Logout'),
           onTap: () => _handleLogout(context),
         ),
       ],

@@ -55,14 +55,14 @@ class _EditProfileFormState extends State<EditProfileForm> {
         );
 
     if (!mounted) return;
-    final message = success ? 'Đã cập nhật hồ sơ.' : 'Không thể lưu, vui lòng thử lại.';
+    final message = success ? 'Profile updated successfully.' : 'Failed to save profile, please try again.';
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   String? _validatePositiveNumber(String? value) {
     if (value == null || value.trim().isEmpty) return null;
     final parsed = double.tryParse(value.trim());
-    if (parsed == null || parsed <= 0) return 'Phải là số dương.';
+    if (parsed == null || parsed <= 0) return 'Must be a positive number.';
     return null;
   }
 
@@ -76,37 +76,37 @@ class _EditProfileFormState extends State<EditProfileForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppTextField(
-            label: 'Tên hiển thị',
+            label: 'Display Name',
             controller: _nameController,
             validator: (value) {
-              if (value == null || value.trim().isEmpty) return 'Tên không được để trống.';
+              if (value == null || value.trim().isEmpty) return 'Name cannot be empty.';
               return null;
             },
           ),
           const SizedBox(height: AppSpacing.md),
           AppTextField(
-            label: 'Chiều cao (cm)',
+            label: 'Height (cm)',
             controller: _heightController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: _validatePositiveNumber,
           ),
           const SizedBox(height: AppSpacing.md),
           AppTextField(
-            label: 'Cân nặng hiện tại (kg)',
+            label: 'Current Weight (kg)',
             controller: _currentWeightController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: _validatePositiveNumber,
           ),
           const SizedBox(height: AppSpacing.md),
           AppTextField(
-            label: 'Cân nặng mục tiêu (kg)',
+            label: 'Target Weight (kg)',
             controller: _targetWeightController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: _validatePositiveNumber,
           ),
           const SizedBox(height: AppSpacing.lg),
           PrimaryButton(
-            label: 'Lưu thay đổi',
+            label: 'Save Changes',
             isLoading: provider.isSaving,
             onPressed: _handleSave,
           ),

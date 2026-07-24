@@ -24,8 +24,6 @@ class AppTheme {
     final error = isDark ? AppColors.darkError : AppColors.lightError;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
-    // `divider` đồng thời là màu viền/bóng cứng (Neubrutalism) — đen ở Light,
-    // trắng ở Dark, dùng thống nhất cho Button/TextField/Card/Dialog/Chip.
     final divider = isDark ? AppColors.darkDivider : AppColors.lightDivider;
 
     final colorScheme = ColorScheme(
@@ -62,31 +60,24 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: surface,
-        elevation: 0,
+        elevation: isDark ? 0 : 1,
+        shadowColor: Colors.black.withValues(alpha: isDark ? 0 : 0.08),
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.cardRadius,
-          side: BorderSide(color: divider, width: 2),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.cardRadius),
       ),
-      // Primary Button: nền be (Surface) + chữ đen, khớp đúng `.button-confirm`
-      // của CSS tham khảo (nút không tô màu accent, chỉ viền/chữ đen).
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: surface,
-          foregroundColor: textPrimary,
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(48),
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.buttonRadius,
-            side: BorderSide(color: divider, width: 2),
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.buttonRadius),
           textStyle: textTheme.labelLarge,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: textPrimary,
-          side: BorderSide(color: divider, width: 2),
+          foregroundColor: primary,
+          side: BorderSide(color: primary),
           minimumSize: const Size.fromHeight(48),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.buttonRadius),
           textStyle: textTheme.labelLarge,
@@ -99,17 +90,16 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: surface,
+        filled: false,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         labelStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
         border: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
-          borderSide: BorderSide(color: divider, width: 2),
+          borderSide: BorderSide(color: divider),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
-          borderSide: BorderSide(color: divider, width: 2),
+          borderSide: BorderSide(color: divider),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
@@ -117,7 +107,7 @@ class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
-          borderSide: BorderSide(color: error, width: 2),
+          borderSide: BorderSide(color: error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppRadius.textFieldRadius,
@@ -126,15 +116,27 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
-        indicatorColor: primary.withValues(alpha: 0.25),
-        labelTextStyle: WidgetStateProperty.all(textTheme.labelMedium),
+        indicatorColor: primary.withValues(alpha: 0.15),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(color: primary, size: 24);
+          }
+          return IconThemeData(color: textSecondary, size: 24);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final baseStyle = textTheme.labelMedium ?? const TextStyle();
+          if (states.contains(WidgetState.selected)) {
+            return baseStyle.copyWith(
+              color: primary,
+              fontWeight: FontWeight.bold,
+            );
+          }
+          return baseStyle.copyWith(color: textSecondary);
+        }),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.dialogRadius,
-          side: BorderSide(color: divider, width: 2),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.dialogRadius),
         titleTextStyle: textTheme.titleLarge,
         contentTextStyle: textTheme.bodyMedium,
       ),
@@ -146,9 +148,9 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surface,
-        selectedColor: primary.withValues(alpha: 0.25),
+        selectedColor: primary.withValues(alpha: 0.15),
         labelStyle: textTheme.labelMedium,
-        side: BorderSide(color: divider, width: 2),
+        side: BorderSide(color: divider),
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.chipRadius),
       ),
     );

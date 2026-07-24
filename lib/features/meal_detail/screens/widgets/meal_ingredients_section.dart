@@ -17,28 +17,29 @@ class MealIngredientsSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.lg, AppSpacing.md, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Nguyên liệu', style: theme.textTheme.titleLarge),
-          const SizedBox(height: AppSpacing.sm),
-          ...ingredients.map(
-            (ingredient) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(ingredient.name, style: theme.textTheme.bodyMedium),
-                  ),
-                  Text(
-                    ingredient.measure,
-                    style: theme.textTheme.bodyMedium?.copyWith(color: secondaryColor),
-                  ),
-                ],
-              ),
+      child: ExpansionTile(
+        title: Text('Ingredients', style: theme.textTheme.titleLarge),
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(top: AppSpacing.sm),
+        initiallyExpanded: false,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        children: ingredients.map(
+          (ingredient) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(ingredient.name, style: theme.textTheme.bodyMedium),
+                ),
+                Text(
+                  ingredient.measure,
+                  style: theme.textTheme.bodyMedium?.copyWith(color: secondaryColor),
+                ),
+              ],
             ),
           ),
-        ],
+        ).toList(),
       ),
     );
   }

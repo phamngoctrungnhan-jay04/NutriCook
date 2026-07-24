@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import '../dtos/update_favorite_note_request_dto.dart';
 import '../models/favorite_meal_model.dart';
 import '../repositories/favorite_repository.dart';
+import '../../home/models/meal_model.dart';
 
 /// Pattern trạng thái thống nhất theo SYSTEM_ARCHITECTURE.md mục 9.
 enum FavoriteListStatus { idle, loading, success, error }
@@ -18,12 +19,19 @@ class FavoriteProvider extends ChangeNotifier {
     FirebaseAuth? firebaseAuth,
   })  : _repository = favoriteRepository,
         _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance {
-    _subscribeToFavorites();
+    _authSubscription = _firebaseAuth.authStateChanges().listen((user) {
+      if (user != null) {
+        _subscribeToFavorites(user.uid);
+      } else {
+        reset();
+      }
+    });
   }
 
   final FavoriteRepository _repository;
   final FirebaseAuth _firebaseAuth;
 
+  StreamSubscription<User?>? _authSubscription;
   StreamSubscription<List<FavoriteMealModel>>? _subscription;
 
   FavoriteListStatus _status = FavoriteListStatus.idle;
@@ -38,24 +46,30 @@ class FavoriteProvider extends ChangeNotifier {
 
   /// [Read] Lắng nghe real-time toàn bộ danh sách yêu thích (FR-FAV-06) — mọi
   /// thay đổi (kể cả từ Meal Detail) tự động phản ánh vào danh sách này.
-  void _subscribeToFavorites() {
-    final uid = _uid;
-    if (uid == null) return;
+  bool _isDisposed = false;
 
-    _status = FavoriteListStatus.loading;
-    notifyListeners();
+  void _subscribeToFavorites(String uid) {
+    _subscription?.cancel();
+    Future.microtask(() {
+      _status = FavoriteListStatus.loading;
+      notifyListeners();
+    });
 
     _subscription = _repository.watchFavorites(uid).listen(
       (favorites) {
         _favorites = favorites;
         _status = FavoriteListStatus.success;
         _errorMessage = null;
-        notifyListeners();
+        Future.microtask(() {
+          notifyListeners();
+        });
       },
       onError: (Object error) {
         _status = FavoriteListStatus.error;
-        _errorMessage = 'Không thể tải danh sách yêu thích.';
-        notifyListeners();
+        _errorMessage = 'Failed to load favorite list.';
+        Future.microtask(() {
+          notifyListeners();
+        });
       },
     );
   }
@@ -91,18 +105,45 @@ class FavoriteProvider extends ChangeNotifier {
     }
   }
 
+  /// Toggle yêu thích cho món ăn trực tiếp từ bên ngoài.
+  Future<void> toggleFavorite(MealModel meal) async {
+    final uid = _uid;
+    if (uid == null) return;
+    try {
+      await _repository.toggleFavorite(
+        uid: uid,
+        idMeal: meal.idMeal,
+        mealName: meal.name,
+        mealThumbnail: meal.thumbnailUrl,
+      );
+    } catch (e) {
+      debugPrint('[FavoriteProvider] Failed to toggle favorite: $e');
+    }
+  }
+
   /// Gọi khi đăng xuất — hủy listener, tránh lộ dữ liệu tài khoản cũ sang phiên
   /// đăng nhập mới (sẽ được nối khi module Logout được xây).
   void reset() {
     _subscription?.cancel();
     _subscription = null;
     _favorites = const [];
-    _status = FavoriteListStatus.idle;
-    notifyListeners();
+    Future.microtask(() {
+      _status = FavoriteListStatus.idle;
+      notifyListeners();
+    });
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _authSubscription?.cancel();
     _subscription?.cancel();
     super.dispose();
   }

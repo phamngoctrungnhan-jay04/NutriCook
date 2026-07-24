@@ -24,8 +24,8 @@ class MealProvider extends ChangeNotifier {
   String? _errorMessage;
 
   String _searchKeyword = '';
-  String? _selectedCategory;
-  List<String> _categories = const [];
+  Set<String> _selectedIngredients = {};
+  List<String> _ingredients = const [];
   final List<String> _searchHistory = [];
 
   Timer? _debounceTimer;
@@ -36,14 +36,14 @@ class MealProvider extends ChangeNotifier {
   bool get isLoading => _status == MealListStatus.loading;
 
   String get searchKeyword => _searchKeyword;
-  String? get selectedCategory => _selectedCategory;
-  List<String> get categories => _categories;
+  Set<String> get selectedIngredients => _selectedIngredients;
+  List<String> get ingredients => _ingredients;
   List<String> get searchHistory => List.unmodifiable(_searchHistory);
 
   Future<void> fetchDefaultMeals() async {
     _debounceTimer?.cancel();
     _searchKeyword = '';
-    _selectedCategory = null;
+    _selectedIngredients = {};
     await _runFetch(() => _repository.getDefaultMeals());
   }
 
@@ -71,14 +71,13 @@ class MealProvider extends ChangeNotifier {
     final trimmed = keyword.trim();
 
     // Không gọi API với từ khóa rỗng — quay về danh sách mặc định
-    // (đề xuất ở BUSINESS_FLOW.md mục Search & Filter).
     if (trimmed.isEmpty) {
-      _selectedCategory = null;
+      _selectedIngredients = {};
       await _runFetch(() => _repository.getDefaultMeals());
       return;
     }
 
-    _selectedCategory = null;
+    _selectedIngredients = {};
     await _runFetch(() => _repository.searchMeals(trimmed));
 
     // [History] Chỉ lưu lại từ khóa khi tìm kiếm thành công.
@@ -87,30 +86,52 @@ class MealProvider extends ChangeNotifier {
     }
   }
 
-  /// [Filter] Chọn/bỏ chọn danh mục — tự xóa từ khóa search đang có, vì
-  /// TheMealDB không hỗ trợ kết hợp cả hai điều kiện trong 1 request
-  /// (BUSINESS_FLOW.md, đề xuất bổ sung #1).
-  Future<void> selectCategory(String? category) async {
+  /// [Filter] Áp dụng bộ lọc nhiều nguyên liệu — tự xóa từ khóa search đang có.
+  /// Lọc nguyên liệu sử dụng phép GIAO (intersection) — món ăn phải chứa tất cả nguyên liệu lọc.
+  Future<void> applyIngredients(Set<String> ingredients) async {
     _debounceTimer?.cancel();
     _searchKeyword = '';
-    _selectedCategory = category;
+    _selectedIngredients = ingredients;
 
-    if (category == null) {
+    if (ingredients.isEmpty) {
       await _runFetch(() => _repository.getDefaultMeals());
       return;
     }
-    await _runFetch(() => _repository.filterByCategory(category));
+    await _runFetch(() => _fetchMergedIngredients(ingredients));
   }
 
-  /// [Suggestion] Nạp danh sách danh mục thật từ TheMealDB — dùng làm chip lọc
-  /// và một phần nguồn gợi ý.
-  Future<void> loadCategories() async {
+  /// Gọi filterByIngredient cho từng nguyên liệu (song song), tìm các ID chung (GIAO - AND).
+  Future<List<MealModel>> _fetchMergedIngredients(Set<String> ingredients) async {
+    final lists = await Future.wait(
+      ingredients.map((ingredient) => _repository.filterByIngredient(ingredient)),
+    );
+    if (lists.isEmpty) return const [];
+
+    var commonIds = lists.first.map((m) => m.idMeal).toSet();
+    for (var i = 1; i < lists.length; i++) {
+      final currentIds = lists[i].map((m) => m.idMeal).toSet();
+      commonIds = commonIds.intersection(currentIds);
+    }
+
+    final seen = <String>{};
+    final merged = <MealModel>[];
+    for (final list in lists) {
+      for (final meal in list) {
+        if (commonIds.contains(meal.idMeal) && seen.add(meal.idMeal)) {
+          merged.add(meal);
+        }
+      }
+    }
+    return merged;
+  }
+
+  /// [Suggestion] Nạp danh sách nguyên liệu thật từ TheMealDB — dùng làm chip lọc.
+  Future<void> loadIngredients() async {
     try {
-      _categories = await _repository.getCategories();
+      _ingredients = await _repository.getIngredients();
       notifyListeners();
-    } on AppException {
-      // Danh mục chỉ là gợi ý phụ trợ — lỗi tải danh mục không nên chặn màn
-      // hình chính, nên không set _status = error ở đây.
+    } catch (e) {
+      // Lỗi tải nguyên liệu phụ trợ không chặn màn hình chính.
     }
   }
 
@@ -140,6 +161,10 @@ class MealProvider extends ChangeNotifier {
     } on AppException catch (e) {
       _status = MealListStatus.error;
       _errorMessage = e.message;
+      notifyListeners();
+    } catch (e) {
+      _status = MealListStatus.error;
+      _errorMessage = 'An unknown error occurred, please try again later.';
       notifyListeners();
     }
   }

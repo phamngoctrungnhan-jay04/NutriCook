@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../custom_recipe/repositories/custom_recipe_repository.dart';
 import '../../../core/errors/api_exception.dart';
 import '../../favorite/repositories/favorite_repository.dart';
 import '../../home/models/meal_model.dart';
@@ -16,13 +17,16 @@ class MealDetailProvider extends ChangeNotifier {
   MealDetailProvider({
     required HomeRepository homeRepository,
     required FavoriteRepository favoriteRepository,
+    CustomRecipeRepository? customRecipeRepository,
     FirebaseAuth? firebaseAuth,
   })  : _homeRepository = homeRepository,
         _favoriteRepository = favoriteRepository,
+        _customRecipeRepository = customRecipeRepository,
         _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   final HomeRepository _homeRepository;
   final FavoriteRepository _favoriteRepository;
+  final CustomRecipeRepository? _customRecipeRepository;
   final FirebaseAuth _firebaseAuth;
 
   MealDetailStatus _status = MealDetailStatus.idle;
@@ -45,17 +49,28 @@ class MealDetailProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final meal = await _homeRepository.getMealDetail(idMeal);
+      MealModel? meal;
+      if (idMeal.startsWith('custom_') && _customRecipeRepository != null) {
+        final uid = _uid;
+        if (uid != null) {
+          meal = await _customRecipeRepository.getCustomRecipe(uid, idMeal);
+        }
+      } else {
+        meal = await _homeRepository.getMealDetail(idMeal);
+      }
+
       if (meal == null) {
         _status = MealDetailStatus.error;
-        _errorMessage = 'Không tìm thấy thông tin món ăn này.';
+        _errorMessage = 'Recipe not found.';
         notifyListeners();
         return;
       }
       _meal = meal;
       _status = MealDetailStatus.success;
       notifyListeners();
-      await _loadFavoriteStatus(idMeal);
+      if (!idMeal.startsWith('custom_')) {
+        await _loadFavoriteStatus(idMeal);
+      }
     } on AppException catch (e) {
       _status = MealDetailStatus.error;
       _errorMessage = e.message;

@@ -6,6 +6,12 @@ import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/custom_recipe/repositories/custom_recipe_repository.dart';
+import '../../features/custom_recipe/screens/add_edit_recipe_screen.dart';
+import '../../features/custom_recipe/screens/my_recipes_screen.dart';
+import '../../features/explore/providers/category_meals_provider.dart';
+import '../../features/explore/screens/category_meals_screen.dart';
+import '../../features/explore/screens/explore_screen.dart';
 import '../../features/favorite/repositories/favorite_repository.dart';
 import '../../features/favorite/screens/favorite_screen.dart';
 import '../../features/home/repositories/home_repository.dart';
@@ -24,12 +30,14 @@ class AppRouter {
     required this.authStateNotifier,
     required this.homeRepository,
     required this.favoriteRepository,
+    required this.customRecipeRepository,
     NavigatorObserver? navigatorObserver,
   }) : _observers = navigatorObserver == null ? const [] : [navigatorObserver];
 
   final AuthStateNotifier authStateNotifier;
   final HomeRepository homeRepository;
   final FavoriteRepository favoriteRepository;
+  final CustomRecipeRepository customRecipeRepository;
   final List<NavigatorObserver> _observers;
 
   late final GoRouter router = GoRouter(
@@ -72,19 +80,45 @@ class AppRouter {
                   GoRoute(
                     path: AppRoutes.mealDetail,
                     name: RouteNames.mealDetail,
-                    builder: (context, state) {
-                      final idMeal = state.pathParameters['id']!;
-                      // MealDetailProvider tạo mới mỗi lần vào 1 món khác nhau
-                      // (không dùng singleton toàn app) — tránh lẫn dữ liệu
-                      // món cũ khi vừa điều hướng sang.
-                      return ChangeNotifierProvider(
-                        create: (_) => MealDetailProvider(
-                          homeRepository: homeRepository,
-                          favoriteRepository: favoriteRepository,
-                        ),
-                        child: MealDetailScreen(idMeal: idMeal),
-                      );
-                    },
+                    builder: (context, state) =>
+                        _buildMealDetail(state.pathParameters['id']!),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.explore,
+                name: RouteNames.explore,
+                builder: (context, state) => const ExploreScreen(),
+                routes: [
+                  // Meal Detail lồng riêng trong nhánh Explore — tên route khác
+                  // với nhánh Home (go_router không cho trùng tên) nhưng dùng
+                  // lại cùng màn hình + provider.
+                  GoRoute(
+                    path: AppRoutes.mealDetail,
+                    name: RouteNames.exploreMealDetail,
+                    builder: (context, state) =>
+                        _buildMealDetail(state.pathParameters['id']!),
+                  ),
+                  // Trang món ăn theo danh mục (chạm 1 thẻ danh mục ở tab Khám
+                  // phá). Meal Detail lồng bên trong để back trả về đúng trang
+                  // danh mục thay vì về thẳng tab Khám phá.
+                  GoRoute(
+                    path: AppRoutes.categoryMeals,
+                    name: RouteNames.exploreCategoryMeals,
+                    builder: (context, state) =>
+                        _buildCategoryMeals(state.pathParameters['name']!),
+                    routes: [
+                      GoRoute(
+                        path: AppRoutes.mealDetail,
+                        name: RouteNames.exploreCategoryMealDetail,
+                        builder: (context, state) =>
+                            _buildMealDetail(state.pathParameters['id']!),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -105,6 +139,33 @@ class AppRouter {
                 path: AppRoutes.profile,
                 name: RouteNames.profile,
                 builder: (context, state) => const ProfileScreen(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutes.myRecipes,
+                    name: RouteNames.myRecipes,
+                    builder: (context, state) => const MyRecipesScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'add',
+                        name: RouteNames.addRecipe,
+                        builder: (context, state) => const AddEditRecipeScreen(),
+                      ),
+                      GoRoute(
+                        path: 'edit/:id',
+                        name: RouteNames.editRecipe,
+                        builder: (context, state) => AddEditRecipeScreen(
+                          idMeal: state.pathParameters['id'],
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'meal/:id',
+                        name: RouteNames.myRecipeDetail,
+                        builder: (context, state) =>
+                            _buildMealDetail(state.pathParameters['id']!),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -112,6 +173,32 @@ class AppRouter {
       ),
     ],
   );
+
+  /// Dựng Meal Detail dùng chung cho cả nhánh Home và Explore. MealDetailProvider
+  /// tạo mới mỗi lần vào 1 món khác nhau (không dùng singleton toàn app) — tránh
+  /// lẫn dữ liệu món cũ khi vừa điều hướng sang.
+  Widget _buildMealDetail(String idMeal) {
+    return ChangeNotifierProvider(
+      create: (_) => MealDetailProvider(
+        homeRepository: homeRepository,
+        favoriteRepository: favoriteRepository,
+        customRecipeRepository: customRecipeRepository,
+      ),
+      child: MealDetailScreen(idMeal: idMeal),
+    );
+  }
+
+  /// Trang món ăn theo danh mục — dùng lại HomeRepository.filterByCategory qua
+  /// CategoryMealsProvider (tạo mới mỗi lần vào 1 danh mục).
+  Widget _buildCategoryMeals(String category) {
+    return ChangeNotifierProvider(
+      create: (_) => CategoryMealsProvider(
+        homeRepository: homeRepository,
+        customRecipeRepository: customRecipeRepository,
+      ),
+      child: CategoryMealsScreen(categoryName: category),
+    );
+  }
 
   String? _redirect(BuildContext context, GoRouterState state) {
     final status = authStateNotifier.status;

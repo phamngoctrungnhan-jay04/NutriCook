@@ -60,7 +60,7 @@ class ProfileProvider extends ChangeNotifier {
       final profile = await _service.getProfile(uid);
       if (profile == null) {
         _status = ProfileStatus.error;
-        _errorMessage = 'Không tìm thấy hồ sơ người dùng.';
+        _errorMessage = 'User profile not found.';
         notifyListeners();
         return;
       }
@@ -69,7 +69,7 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _status = ProfileStatus.error;
-      _errorMessage = 'Không thể tải hồ sơ, vui lòng thử lại.';
+      _errorMessage = 'Failed to load profile, please try again.';
       notifyListeners();
     }
   }
@@ -117,7 +117,7 @@ class ProfileProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _isSaving = false;
-      _errorMessage = 'Không thể lưu hồ sơ, vui lòng thử lại.';
+      _errorMessage = 'Failed to save profile, please try again.';
       notifyListeners();
       return false;
     }
@@ -145,7 +145,7 @@ class ProfileProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _isUploadingAvatar = false;
-      _errorMessage = 'Không thể tải ảnh lên, vui lòng thử lại.';
+      _errorMessage = 'Failed to upload avatar, please try again.';
       notifyListeners();
       return false;
     }

@@ -18,7 +18,7 @@ class FavoriteScreen extends StatelessWidget {
     final provider = context.watch<FavoriteProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Yêu thích')),
+      appBar: AppBar(title: const Text('Favorite')),
       body: _buildBody(context, provider),
     );
   }
@@ -30,14 +30,14 @@ class FavoriteScreen extends StatelessWidget {
         return const LoadingIndicator();
       case FavoriteListStatus.error:
         return ErrorView(
-          message: provider.errorMessage ?? 'Đã xảy ra lỗi, vui lòng thử lại.',
+          message: provider.errorMessage ?? 'An error occurred, please try again.',
         );
       case FavoriteListStatus.success:
         if (provider.favorites.isEmpty) {
           return const EmptyStateView(
             icon: Icons.favorite_border,
-            title: 'Chưa có món ăn yêu thích',
-            description: 'Khám phá món ăn và nhấn biểu tượng trái tim để lưu vào đây.',
+            title: 'No favorite meals yet',
+            description: 'Explore meals and tap the heart icon to save them here.',
           );
         }
         return ListView.separated(
@@ -59,7 +59,7 @@ class FavoriteScreen extends StatelessWidget {
   void _handleDelete(BuildContext context, FavoriteMealModel favorite) {
     context.read<FavoriteProvider>().removeFavorite(favorite.idMeal);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Đã xóa "${favorite.mealName}" khỏi yêu thích.')),
+      SnackBar(content: Text('Removed "${favorite.mealName}" from favorites.')),
     );
   }
 }

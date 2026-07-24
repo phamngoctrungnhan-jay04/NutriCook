@@ -10,4 +10,6 @@ abstract class HomeRepository {
   Future<List<MealModel>> filterByCategory(String category);
   Future<MealModel?> getMealDetail(String idMeal);
   Future<List<String>> getCategories();
+  Future<List<String>> getIngredients();
+  Future<List<MealModel>> filterByIngredient(String ingredient);
 }

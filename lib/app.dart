@@ -12,6 +12,11 @@ import 'core/services/analytics_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/auth/services/auth_service.dart';
+import 'features/explore/providers/explore_provider.dart';
+import 'features/explore/repositories/explore_repository.dart';
+import 'features/explore/repositories/explore_repository_impl.dart';
+import 'features/custom_recipe/providers/custom_recipe_provider.dart';
+import 'features/custom_recipe/repositories/custom_recipe_repository.dart';
 import 'features/favorite/providers/favorite_provider.dart';
 import 'features/favorite/repositories/favorite_local_data_source.dart';
 import 'features/favorite/repositories/favorite_remote_data_source.dart';
@@ -38,13 +43,17 @@ class _AppState extends State<App> {
   late final AuthStateNotifier _authStateNotifier;
   late final AnalyticsService _analyticsService;
   late final HomeRepository _homeRepository;
+  late final ExploreRepository _exploreRepository;
   late final FavoriteRepository _favoriteRepository;
+  late final CustomRecipeRepository _customRecipeRepository;
   late final AppRouter _appRouter;
 
   late final AuthProvider _authProvider;
   late final MealProvider _mealProvider;
+  late final ExploreProvider _exploreProvider;
   late final FavoriteProvider _favoriteProvider;
   late final ProfileProvider _profileProvider;
+  late final CustomRecipeProvider _customRecipeProvider;
 
   StreamSubscription<User?>? _authStateSubscription;
 
@@ -55,27 +64,39 @@ class _AppState extends State<App> {
     _authStateNotifier = AuthStateNotifier();
     _analyticsService = AnalyticsService();
 
-    _homeRepository = HomeRepositoryImpl(mealApiService: MealApiService());
+    // 1 MealApiService dùng chung cho Home và Explore (tránh tạo 2 Dio client).
+    final mealApiService = MealApiService();
+    _homeRepository = HomeRepositoryImpl(mealApiService: mealApiService);
+    _exploreRepository = ExploreRepositoryImpl(mealApiService: mealApiService);
     _favoriteRepository = FavoriteRepositoryImpl(
       remoteDataSource: FavoriteRemoteDataSource(),
       localDataSource: FavoriteLocalDataSource(),
     );
+    _customRecipeRepository = CustomRecipeRepository();
 
     _authProvider = AuthProvider(
       authService: AuthService(),
       analyticsService: _analyticsService,
     );
     _mealProvider = MealProvider(homeRepository: _homeRepository);
+    _exploreProvider = ExploreProvider(
+      exploreRepository: _exploreRepository,
+      customRecipeRepository: _customRecipeRepository,
+    );
     _favoriteProvider = FavoriteProvider(favoriteRepository: _favoriteRepository);
     _profileProvider = ProfileProvider(
       profileService: ProfileService(),
       avatarStorageService: AvatarStorageService(),
+    );
+    _customRecipeProvider = CustomRecipeProvider(
+      customRecipeRepository: _customRecipeRepository,
     );
 
     _appRouter = AppRouter(
       authStateNotifier: _authStateNotifier,
       homeRepository: _homeRepository,
       favoriteRepository: _favoriteRepository,
+      customRecipeRepository: _customRecipeRepository,
       navigatorObserver: _analyticsService.navigatorObserver,
     );
 
@@ -87,14 +108,16 @@ class _AppState extends State<App> {
   }
 
   void _handleAuthStateChanged(User? user) {
-    if (user == null) {
-      _authStateNotifier.update(AuthStatus.unauthenticated);
-      // Tránh lộ dữ liệu yêu thích của tài khoản cũ sang lần đăng nhập kế tiếp
-      // trên cùng thiết bị.
-      _favoriteProvider.reset();
-    } else {
-      _authStateNotifier.update(AuthStatus.authenticated);
-    }
+    Future.microtask(() {
+      if (user == null) {
+        _authStateNotifier.update(AuthStatus.unauthenticated);
+        // Tránh lộ dữ liệu yêu thích của tài khoản cũ sang lần đăng nhập kế tiếp
+        // trên cùng thiết bị.
+        _favoriteProvider.reset();
+      } else {
+        _authStateNotifier.update(AuthStatus.authenticated);
+      }
+    });
   }
 
   @override
@@ -102,8 +125,10 @@ class _AppState extends State<App> {
     _authStateSubscription?.cancel();
     _authProvider.dispose();
     _mealProvider.dispose();
+    _exploreProvider.dispose();
     _favoriteProvider.dispose();
     _profileProvider.dispose();
+    _customRecipeProvider.dispose();
     _authStateNotifier.dispose();
     super.dispose();
   }
@@ -114,8 +139,10 @@ class _AppState extends State<App> {
       providers: [
         ChangeNotifierProvider.value(value: _authProvider),
         ChangeNotifierProvider.value(value: _mealProvider),
+        ChangeNotifierProvider.value(value: _exploreProvider),
         ChangeNotifierProvider.value(value: _favoriteProvider),
         ChangeNotifierProvider.value(value: _profileProvider),
+        ChangeNotifierProvider.value(value: _customRecipeProvider),
       ],
       child: MaterialApp.router(
         title: 'NutriCook',
