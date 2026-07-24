@@ -1,0 +1,27 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "nutricook-prm393",
+          "appId": "1:595471141555:android:3c32615783afad60c8bec6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "nutricook-prm393",
+          "configurations": {
+            "android": "1:595471141555:android:3c32615783afad60c8bec6"
+          }
+        }
+      }
+    }
+  }
+}
